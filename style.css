@@ -1,0 +1,79 @@
+@font-face {
+  font-family: "Open Sans";
+  src: url("ProductSans-Medium.woff") format("woff");
+}
+body {
+  font-size: 12pt;
+  font-family: Open Sans;
+  display:flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+#trash{
+  width:30%;
+  background: red;
+  color:white;
+  position: fixed;
+  bottom:0;
+  right:0;
+  margin:10px;
+  padding:10px;
+  text-align: center;
+}
+.plus{
+  float: right;
+}
+.category{
+  width:33%;
+  height:100%;
+  text-align: center;
+  min-height: 100%;
+  transition: all 1s ease;
+}
+.special{
+  width: 30%;
+  position: fixed;
+  bottom:0;
+  left:0;
+  text-align: center;
+}
+.category > div:first-child{
+  background: #497ae3;
+  color:white;
+  border-radius: 10pt;
+  padding:3%;
+}
+.list{
+  display:flex;
+  height:100%;
+  flex-direction: column;
+  margin:5%;
+  min-height:450px;
+}
+.note{
+  margin:10px;
+  padding:10px;
+  color: black;
+  touch-action: none;
+  user-select: none;
+  outline:none;
+  z-index: 2;
+  box-shadow: 2px 2px 5px 5px #000000;
+}
+@media screen and (max-width: 800px){
+  body{
+    flex-direction: column;
+  }
+  .category{
+    width: 100%;
+  }
+  #trash{
+    height:10%;
+    display:flex;
+    align-items: center;
+    justify-content: space-around;
+  }
+  .special{
+    width: 60;
+  }
+}
