@@ -1,116 +1,92 @@
-function onMove(event) {
-  const target = event.target;
+const $ = e => document.querySelectorAll(e);
+const loadImages = async (...urls) => await Promise.all(urls.map(url => new Promise((resolve, reject) => {
+  const img = new Image();
+  img.onload = () => resolve(img);
+  img.onerror = reject;
+  img.src = url;
+})));
 
-  const dataX = target.getAttribute('data-x');
-  const dataY = target.getAttribute('data-y');
-  const initialX = parseFloat(dataX) || 0;
-  const initialY = parseFloat(dataY) || 0;
+let images;
 
-  const deltaX = event.dx;
-  const deltaY = event.dy;
-
-  const newX = initialX + deltaX;
-  const newY = initialY + deltaY;
-
-  target.style.transform = `translate(${newX}px, ${newY}px)`;
-
-  target.setAttribute('data-x', newX);
-  target.setAttribute('data-y', newY);
+function createTask(getNote = false, text = "") {
+  let task = document.createElement("div"),
+    note = document.createElement("div"),
+    tooltip = document.createElement("div");
+  note.innerText = text;
+  note.classList.add("note");
+  note.contentEditable = true;
+  note.addEventListener("input", update);
+  task.append(note);
+  tooltip.classList.add("tooltip");
+  images.forEach((a, i) => {
+    const button = a.cloneNode(true);
+    let id;
+    button.addEventListener('click', () => {
+      note.style.animation = '';
+      switch (i) {
+        case 0:
+          id = task.parentElement.id[1] - 1;
+          if (id !== 0) {
+            $('#p' + id)[0].prepend(task);
+            setTimeout(()=>note.style.animation = 'pulse 0.5s linear',50);
+          };
+          break;
+        case 1:
+          id = +task.parentElement.id[1] + 1;
+          if (id !== 4) {
+            $('#p' + id)[0].prepend(task);
+            setTimeout(()=>note.style.animation = 'pulse 0.5s linear',50);
+          }
+          break;
+        case 2:
+          if(task.previousElementSibling){
+            task.parentNode.insertBefore(task, task.previousElementSibling);
+            setTimeout(()=>note.style.animation = 'pulse 0.5s linear',50);
+          }
+          break;
+        case 3:
+          if(task.nextElementSibling){
+            task.parentNode.insertBefore(task.nextElementSibling, task);
+            setTimeout(()=>note.style.animation = 'pulse 0.5s linear',50);
+          }
+          break;
+        case 4:
+          task.remove();
+          break;
+      }
+      update();
+    })
+    tooltip.append(button);
+  });
+  task.append(tooltip);
+  return getNote ? [task, note] : task;
 }
-interact('.note').draggable({
-  onmove: onMove,
-  listeners: {
-    end(event) {
-      const target = event.target;
-      target.style.transform = `translate(0,0)`;
-      target.setAttribute('data-x', 0);
-      target.setAttribute('data-y', 0);
-    }
-  }
-})
-interact('.list').dropzone({
-  accept: ".note",
-  overlap: 0.5,
-  ondrop: function(e) {
-    let target = e.relatedTarget;
-    if (target.classList.contains("special")) {
-      target.style.transform = `translate(0,0)`;
-      target.setAttribute('data-x', 0);
-      target.setAttribute('data-y', 0);
-      target = target.cloneNode(true);
-      target.classList.remove("special");
-      target.contentEditable = true;
-      target.addEventListener("input", update);
-    };
-    e.target.appendChild(target);
-    update();
-  }
-})
-interact('.titles').dropzone({
-  accept: ".note",
-  overlap: 0.2,
-  ondrop: function(e) {
-    let target = e.relatedTarget;
-    if (target.classList.contains("special")) {
-      target.style.transform = `translate(0,0)`;
-      target.setAttribute('data-x', 0);
-      target.setAttribute('data-y', 0);
-      target = target.cloneNode(true);
-      target.classList.remove("special");
-      target.contentEditable = true;
-      target.addEventListener("input", update);
-    };
-    let ele = e.target.nextElementSibling
-    ele.insertBefore(target, ele.childNodes[0]);
-    update();
-  }
-})
-interact('#trash').dropzone({
-  accept: ".note",
-  overlap: 0.1,
-  ondrop: function(e) {
-    let target = e.relatedTarget;
-    if (!target.classList.contains("special")) {
-      target.remove();
-    } else target.style.background = "palegreen";
-    update();
-  },
-  ondragenter: function(e) {
-    let target = e.relatedTarget;
-    target.style.background = "darkgreen";
-  },
-  ondragleave: function(e) {
-    let target = e.relatedTarget;
-    target.style.background = "palegreen";
-  }
-})
-function retrieve(){
-  let data=[];
-  for(let list of document.querySelectorAll(".list")){
+function retrieve() {
+  let data = [];
+  for (let list of document.querySelectorAll(".list")) {
     data.push([]);
-    const i=data.length-1;
-    for(let d of list.children){
+    const i = data.length - 1;
+    for (let d of list.children) {
       data[i].push(d.innerText);
     }
   }
   return data
 }
-function update(){
-  localStorage.todo=JSON.stringify(retrieve());
+function update() {
+  localStorage.todo = JSON.stringify(retrieve());
 }
-function load(){
-  if(!localStorage.todo)return false;
-  let data=JSON.parse(localStorage.todo),
-  lists=document.querySelectorAll(".list");
-  for(let i=0;i<data.length;i++){
-    data[i].forEach(a=>{
-      let ele=document.createElement("div");
-      ele.innerText=a;
-      ele.classList.add("note");
-      ele.contentEditable=true;
-      ele.addEventListener("input",update);
-      lists[i].appendChild(ele);
-    });
-  }
+function load() {
+  if (!localStorage.todo) return false;
+  let data = JSON.parse(localStorage.todo),
+    lists = $(".list");
+  for (let i = 0; i < data.length; i++)
+    data[i].forEach(a => lists[i].append(createTask(false, a)));
 }
-load();
+$('.plus').forEach(c => c.addEventListener('click', e => {
+  const id = e.target.parentElement.getAttribute("name") || e.target.parentElement.parentElement.getAttribute("name");
+  let task = createTask(true);
+  $('#' + id)[0].append(task[0]);
+  task[1].focus();
+}));
+
+loadImages("icons/arrowleft.svg", "icons/arrowright.svg", "icons/arrowup.svg", "icons/arrowdown.svg", "icons/bin.svg").then(a => { images = a; load(); });

@@ -1,27 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=Edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>To-Do</title>
+  <title>To-Do!</title>
   <link rel="stylesheet" href="style.css">
-  <link rel="icon" href="icon.jpg"></link>
+  <link rel="icon" href="icons/favicon.ico">
+  </link>
 </head>
 
 <body>
   <div class="category">
-    <div class="titles">Pending<object data="plus.svg" width="20" height="20" class="plus" id="p1"></object></div>
-    <div class="list"></div>
+    <div class="titles">Pending<div class="plus" name="p1"><svg xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 100 100">
+          <path d="M10 50h80-40V10v80" fill="none" stroke="#fff" stroke-width="5" />
+        </svg></div>
+    </div>
+    <div class="list" id="p1">
+    </div>
   </div>
   <div class="category">
-    <div class="titles">Ongoing<object data="plus.svg" width="20" height="20" class="plus" id="p1"></object></div>
-    <div class="list"></div>
+    <div class="titles">Ongoing<div class="plus" name="p2"><svg xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 100 100">
+          <path d="M10 50h80-40V10v80" fill="none" stroke="#fff" stroke-width="5" />
+        </svg></div>
+    </div>
+    <div class="list" id="p2"></div>
   </div>
   <div class="category">
-    <div class="titles">Completed<object data="plus.svg" width="20" height="20" class="plus" id="p1"></object></div>
-    <div class="list"></div>
+    <div class="titles">Completed<div class="plus" name="p3"><svg xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 100 100">
+          <path d="M10 50h80-40V10v80" fill="none" stroke="#fff" stroke-width="5" />
+        </svg></div>
+    </div>
+    <div class="list" id="p3"></div>
   </div>
   <script src="main.js"></script>
 </body>
+
 </html>
